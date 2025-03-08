@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using GourmetShopWebApp.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GourmetShopWebApp.Controllers;
 
@@ -27,5 +28,11 @@ public class HomeController : Controller
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+
+    [Authorize(Roles = "Admin")]
+    public IActionResult AdminDashboard()
+    {
+        return View();
     }
 }
