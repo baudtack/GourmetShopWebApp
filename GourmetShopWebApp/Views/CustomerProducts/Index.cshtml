@@ -1,0 +1,61 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IEnumerable<GourmetShopWebApp.Models.Product>
+
+@{
+    ViewData["Title"] = "Products";
+}
+
+<h1>Products</h1>
+
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            <label>Find by name: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" /></label>
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-sortorder="@ViewData["ProductSortParam"]" asp-route-searchstring="@ViewData["CurrentFilter"]">@Html.DisplayNameFor(model => model.ProductName)</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortorder="@ViewData["PriceSortParam"]" asp-route-searchstring="@ViewData["CurrentFilter"]"> @Html.DisplayNameFor(model => model.UnitPrice)</a>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Package)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Supplier)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnitPrice)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Package)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Supplier.CompanyName)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,9 +1,12 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
+
 namespace GourmetShopWebApp.Models
 {
     public class Supplier
     {
         public int Id { get; set; }
+        [Display(Name ="Supplier")]
         public string CompanyName { get; set; }
         public string? ContactName { get; set; }
         public string? ContactTitle { get; set; }
