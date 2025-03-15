@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using GourmetShopWebApp.Data;
+using GourmetShopWebApp;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
@@ -53,7 +54,7 @@ async Task CreateRoles(IServiceProvider serviceProvider)
     using (var scope = serviceProvider.CreateScope())
     {
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
         string[] roleNames = { "Admin", "User" };
         foreach (var roleName in roleNames)
@@ -71,7 +72,7 @@ async Task CreateRoles(IServiceProvider serviceProvider)
 
         if (adminUser == null)
         {
-            adminUser = new IdentityUser { UserName = adminEmail, Email = adminEmail };
+            adminUser = new ApplicationUser { UserName = adminEmail, Email = adminEmail };
             await userManager.CreateAsync(adminUser, adminPassword);
             await userManager.AddToRoleAsync(adminUser, "Admin");
         }

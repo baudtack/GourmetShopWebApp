@@ -1,0 +1,38 @@
+﻿@model IEnumerable<GourmetShopWebApp.Models.Cart>
+
+@if(Model.Any()) {
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Product.ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product.UnitPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product.Package)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.ProductName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.UnitPrice)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.Package)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+} else {
+    <p>Cart empty</p>
+}

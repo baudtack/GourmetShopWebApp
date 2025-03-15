@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GourmetShopWebApp.Data;
 
-public partial class ApplicationDbContext : IdentityDbContext
+public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
