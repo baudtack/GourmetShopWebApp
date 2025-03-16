@@ -3,6 +3,7 @@ using GourmetShopWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace GourmetShopWebApp.Controllers
 {
@@ -15,7 +16,7 @@ namespace GourmetShopWebApp.Controllers
         {
             _context = context;
         }
-        public  IActionResult Index(string searchstring, string sortorder)
+        public  async Task<IActionResult> Index(string searchstring, string sortorder)
         {
 
             ViewData["CurrentFilter"] = searchstring;
@@ -28,6 +29,8 @@ namespace GourmetShopWebApp.Controllers
             {
                 products = products.Where(p => p.ProductName.Contains(searchstring));
             }
+
+            products = products.Include(p => p.Supplier);
 
             switch (sortorder)
             {
@@ -46,6 +49,8 @@ namespace GourmetShopWebApp.Controllers
 
             }
             
+           
+
             return View(products);
         }
     }

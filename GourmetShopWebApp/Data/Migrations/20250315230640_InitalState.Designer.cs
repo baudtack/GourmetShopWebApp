@@ -4,6 +4,7 @@ using GourmetShopWebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GourmetShopWebApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250315230640_InitalState")]
+    partial class InitalState
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -133,10 +136,12 @@ namespace GourmetShopWebApp.Data.Migrations
                         .HasColumnType("nvarchar(40)");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
@@ -156,15 +161,8 @@ namespace GourmetShopWebApp.Data.Migrations
                     b.Property<Guid?>("Salt")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id")
                         .HasName("PK_CUSTOMER");
-
-                    b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.HasIndex(new[] { "LastName", "FirstName" }, "IndexCustomerName");
 
@@ -479,15 +477,6 @@ namespace GourmetShopWebApp.Data.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("GourmetShopWebApp.Models.Customer", b =>
-                {
-                    b.HasOne("GourmetShopWebApp.ApplicationUser", "User")
-                        .WithOne("Customer")
-                        .HasForeignKey("GourmetShopWebApp.Models.Customer", "UserId");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("GourmetShopWebApp.Models.Order", b =>
                 {
                     b.HasOne("GourmetShopWebApp.Models.Customer", "Customer")
@@ -578,12 +567,6 @@ namespace GourmetShopWebApp.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("GourmetShopWebApp.ApplicationUser", b =>
-                {
-                    b.Navigation("Customer")
                         .IsRequired();
                 });
 
