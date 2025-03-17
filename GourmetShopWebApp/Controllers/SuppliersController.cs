@@ -1,115 +1,67 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using GourmetShopWebApp.Models;
-using Microsoft.AspNetCore.Authorization;
-using GourmetShopWebApp.Data;
+﻿using GourmetShopWebApp.Models;
+using GourmetShopWebApp.Repositories;
+using GourmetShopWebApp.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace GourmetShopWebApp.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class SuppliersController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ISupplierRepository _supplierRepository;
 
-        public SuppliersController(ApplicationDbContext context)
+        public SuppliersController(ISupplierRepository supplierRepository)
         {
-            _context = context;
+            _supplierRepository = supplierRepository;
         }
 
-        /// GET: Suppliers
+        // GET Suppliers
         public async Task<IActionResult> Index()
         {
-            try
+            var suppliers = await _supplierRepository.GetAllSuppliersAsync();
+            var viewModel = new SupplierSearchViewModel
             {
-                var suppliers = await _context.Suppliers.ToListAsync();
-
-                // Handle null values explicitly
-                foreach (var supplier in suppliers)
-                {
-                    // Safely replace null values with defaults
-                    supplier.ContactName = supplier.ContactName;
-                    supplier.ContactTitle = supplier.ContactTitle;
-                    supplier.Phone = supplier.Phone;
-                    supplier.Fax = supplier.Fax;
-                    supplier.City = supplier.City;
-                    supplier.Country = supplier.Country;
-                }
-
-                return View(suppliers);
-            }
-            catch (Exception ex)
-            {
-                // Log the exception or return an error message
-                Console.WriteLine($"Error: {ex.Message}");
-                return View("Error");
-            }
+                SearchTerm = "",
+                Suppliers = suppliers
+            };
+            return View(viewModel);
         }
 
-
-
-
-        // GET: Suppliers/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET Details
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var supplier = await _context.Suppliers
-                .FirstOrDefaultAsync(m => m.Id == id);
-
+            var supplier = await _supplierRepository.GetSupplierByIdAsync(id);
             if (supplier == null)
             {
                 return NotFound();
             }
 
-            // Null handling: Ensure the properties are not null before accessing them
-            if (supplier.ContactName == null)
-            {
-                supplier.ContactName = "No Contact Name Provided";
-            }
-
-            if (supplier.Phone == null)
-            {
-                supplier.Phone = "No Phone Provided";
-            }
-
-            // Return the view with the supplier model
             return View(supplier);
         }
 
-
-        // GET: Suppliers/Create
+        // GET Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Suppliers/Create
+        // POST Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CompanyName,ContactName,ContactTitle,City,Country,Phone,Fax")] Supplier supplier)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(supplier);
-                await _context.SaveChangesAsync();
+                await _supplierRepository.AddSupplierAsync(supplier);
                 return RedirectToAction(nameof(Index));
             }
             return View(supplier);
         }
 
-
-        // GET: Suppliers/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // GET Edit
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var supplier = await _context.Suppliers.FindAsync(id);
+            var supplier = await _supplierRepository.GetSupplierByIdAsync(id);
             if (supplier == null)
             {
                 return NotFound();
@@ -117,7 +69,7 @@ namespace GourmetShopWebApp.Controllers
             return View(supplier);
         }
 
-        // POST: Suppliers/Edit/5
+        // POST Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,CompanyName,ContactName,ContactTitle,City,Country,Phone,Fax")] Supplier supplier)
@@ -129,37 +81,16 @@ namespace GourmetShopWebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(supplier);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SupplierExists(supplier.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _supplierRepository.UpdateSupplierAsync(supplier);
                 return RedirectToAction(nameof(Index));
             }
             return View(supplier);
         }
 
-        // GET: Suppliers/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET Delete
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var supplier = await _context.Suppliers
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var supplier = await _supplierRepository.GetSupplierByIdAsync(id);
             if (supplier == null)
             {
                 return NotFound();
@@ -168,20 +99,26 @@ namespace GourmetShopWebApp.Controllers
             return View(supplier);
         }
 
-        // POST: Suppliers/Delete/5
+        // POST Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var supplier = await _context.Suppliers.FindAsync(id);
-            _context.Suppliers.Remove(supplier);
-            await _context.SaveChangesAsync();
+            await _supplierRepository.DeleteSupplierAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool SupplierExists(int id)
+        // POST Search
+        [HttpPost]
+        public async Task<IActionResult> Search(string searchTerm)
         {
-            return _context.Suppliers.Any(e => e.Id == id);
+            var suppliers = await _supplierRepository.SearchAsync(searchTerm);
+            var viewModel = new SupplierSearchViewModel
+            {
+                SearchTerm = searchTerm,
+                Suppliers = suppliers
+            };
+            return View("Index", viewModel);
         }
     }
 }

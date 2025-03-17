@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using GourmetShopWebApp.Data;
 using GourmetShopWebApp;
+using GourmetShopWebApp.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 var app = builder.Build();
 
@@ -66,7 +70,7 @@ async Task CreateRoles(IServiceProvider serviceProvider)
         }
 
         // Create an admin user if one does not exist
-        string adminEmail = "admin@demo.com";
+        string adminEmail = "admin@test.com";
         string adminPassword = "Admin@123";
         var adminUser = await userManager.FindByEmailAsync(adminEmail);
 

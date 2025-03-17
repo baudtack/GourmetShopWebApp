@@ -12,17 +12,19 @@ public partial class Product
     [Display(Name = "Product")]
     public string ProductName { get; set; } = null!;
 
-    public int SupplierId { get; set; }
+ 
     [Display(Name = "Price")]
     public decimal? UnitPrice { get; set; }
 
     public string? Package { get; set; }
 
     public bool IsDiscontinued { get; set; }
-
+    public int? CategoryId { get; set; }
+    public virtual Category? Category { get; set; }
     public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
-    public virtual Supplier Supplier { get; set; } = new Supplier();
+    public int SupplierId { get; set; }
+    public virtual Supplier? Supplier { get; set; } = new Supplier();
 }

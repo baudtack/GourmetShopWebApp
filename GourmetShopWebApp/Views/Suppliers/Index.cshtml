@@ -1,16 +1,20 @@
-﻿@model IEnumerable<GourmetShopWebApp.Models.Supplier>
+﻿@model GourmetShopWebApp.ViewModels.SupplierSearchViewModel
+
 
 <h2>Suppliers</h2>
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<form method="post" asp-action="Search">
+    <input type="text" name="searchTerm" placeholder="Search Suppliers" value="@Model.SearchTerm" />
+    <button type="submit">Search</button>
+</form>
 
 <table class="table">
     <thead>
         <tr>
             <th>Company Name</th>
             <th>Contact Name</th>
-            <th>Contact Title</th>
             <th>Phone</th>
             <th>Fax</th>
             <th>City</th>
@@ -18,12 +22,11 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var supplier in Model)
+        @foreach (var supplier in Model.Suppliers)
         {
             <tr>
                 <td>@supplier.CompanyName</td>
                 <td>@supplier.ContactName</td>
-                <td>@supplier.ContactTitle</td>
                 <td>@supplier.Phone</td>
                 <td>@supplier.Fax</td>
                 <td>@supplier.City</td>
