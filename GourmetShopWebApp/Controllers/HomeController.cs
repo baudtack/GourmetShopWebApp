@@ -3,9 +3,11 @@ using GourmetShopWebApp.Models;
 using GourmetShopWebApp.ViewModels;
 using GourmetShopWebApp.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GourmetShopWebApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

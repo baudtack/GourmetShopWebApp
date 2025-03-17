@@ -10,7 +10,7 @@
         var user = await UserManager.GetUserAsync(User);
         
         var count = user.GetCartCount(Context);
-        // WHY IS THIS 0 ON LOGIN BUT NOT IN THE CART?!
+
         <li class="nav-item">
             @Html.ActionLink("My Cart (" + count + ")", "ViewCart", "CustomerCart", new {}, new { @class = "nav-link text-dark"})
         </li>

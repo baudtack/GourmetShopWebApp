@@ -1,11 +1,13 @@
 ﻿using GourmetShopWebApp.Models;
 using GourmetShopWebApp.Repositories;
 using GourmetShopWebApp.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace GourmetShopWebApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class SuppliersController : Controller
     {
         private readonly ISupplierRepository _supplierRepository;
